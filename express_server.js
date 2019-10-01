@@ -53,18 +53,28 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// Generates random string and redirects to short URL view page
 app.post("/urls", (req, res) => {
   let randomString = generateRandomString();
   urlDatabase[randomString] = req.body.longURL;  
   res.redirect("/urls/" + randomString);
-})
+});
 
+// Saves new short URL to database and redirects user to the actual,
+// page of the URL if they want
 app.get("/u/:shortURL", (req, res) => {
-   const shortURL = req.params.shortURL;
+  const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
   res.redirect(longURL);
-   
-})
+});
+
+// Delete URL button...redirect to URL index page
+app.post("/urls/:shortURL/delete", (req, res) => {
+  console.log(`User deleted short URL`);
+  const shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  res.redirect("/urls");
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`)
