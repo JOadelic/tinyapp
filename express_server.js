@@ -76,7 +76,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-// Update URL form (on show page)
+// Update URL form urls_show
 app.post("/urls/:id", (req, res) => {
   const newURL = req.body.longURL;
   const shortURL = req.params.id;
@@ -84,11 +84,6 @@ app.post("/urls/:id", (req, res) => {
   urlDatabase[shortURL] = newURL;
   res.redirect("/urls");
 });
-
-// Edit button on urls/ page
-// app.post("/urls/:id", (req, res) => {
-
-// }
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`)
