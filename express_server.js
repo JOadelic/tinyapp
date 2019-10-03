@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const PORT = 8080;
 const cookieParser = require("cookie-parser");
+const bcrypt = require('bcrypt');
+const password = "purple-monkey-dinosaur"; // found in the req.params object
+const hashedPassword = bcrypt.hashSync(password, 10);
 
 // Generates random 6 character string
 function generateRandomString() {
@@ -28,9 +31,10 @@ function emailLookup(checkThis) {
 function findUser(email, password) {
   for (let userId in users) {
     if (email === users[userId].email) {
-      if (password === users[userId].password) {
+      if (bcrypt.compareSync(password, users[userId].password)) {
         return users[userId];
       }
+      // break;
     }
   } return false;
 }
@@ -221,12 +225,13 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   let newUserId = generateRandomString();
   let newEmail = req.body.email;
-  let newPassword = req.body.password;
+  let hash = bcrypt.hashSync(req.body.password, 10);
+  console.log('password: ',hash);
 
-  if (newEmail === "" || newPassword === "" || emailLookup(newEmail) === true ) {
+  if (newEmail === "" || hash === "" || emailLookup(newEmail) === true ) {
     res.send("<html><body>Ola amigo... <b>400 Bad Request</b></body></html>\n") 
   } else {
-    users[newUserId] = {id: newUserId, email: newEmail, password: newPassword};
+    users[newUserId] = {id: newUserId, email: newEmail, password: hash};
     // console.log(req.body);
     res.cookie("user_name", newUserId);
     res.redirect("/urls");
